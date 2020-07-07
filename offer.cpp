@@ -748,13 +748,14 @@ public:
                 }
                 else
                 {
+                    match[i][j]=0;
                     if(i && (p[j-1]==s[i-1] || p[j-1]=='.'))
                     {
                         match[i][j]=match[i-1][j-1];
                     }
                     else if(p[j-1]=='*')
                     {
-                        if(j-1>0 && (i>0 && (p[j-2]==s[i-1] || p[j-2]=='*')))
+                        if(j-1>0 && (i>0 && (p[j-2]==s[i-1] || p[j-2]=='.')))
                         {
                             match[i][j]=match[i-1][j];
                         }
@@ -771,7 +772,7 @@ public:
             }
         }
 
-        bool re=match[n-1][m-1];
+        int re=match[n-1][m-1];
         for(int i=0;i<n;i++)
             delete []match[i];
         delete []match;
