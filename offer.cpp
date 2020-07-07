@@ -725,47 +725,59 @@ public:
 
     bool isMatch(string s, string p) 
     {
-        cout<<"###"<<endl;
-        return isMatchCore(s,p,0,0);
+        int** match;
+        int n=s.length()+1,m=p.length()+1;
+        match=new int* [n];
+        for(int i=0;i<n;i++)
+        {
+            match[i]=new int[m];
+            //memset(match,0,sizeof(bool)*m);
+        }
+
+        for(int i=0;i<n;i++)
+        {
+            for(int j=0;j<m;j++)
+            {
+                if(!i && !j)
+                {
+                    match[i][j]=1;
+                }
+                else if(!j && i)
+                {
+                    match[i][j]=0;
+                }
+                else
+                {
+                    if(i && (p[j-1]==s[i-1] || p[j-1]=='.'))
+                    {
+                        match[i][j]=match[i-1][j-1];
+                    }
+                    else if(p[j-1]=='*')
+                    {
+                        if(j-1>0 && (i>0 && (p[j-2]==s[i-1] || p[j-2]=='*')))
+                        {
+                            match[i][j]=match[i-1][j];
+                        }
+                        if(j>1)
+                            match[i][j]=match[i][j] || match[i][j-2];
+                    }
+                    else
+                    {
+                        match[i][j]=0;
+                    }
+                    
+                }
+                
+            }
+        }
+
+        bool re=match[n-1][m-1];
+        for(int i=0;i<n;i++)
+            delete []match[i];
+        delete []match;
+
+        return re;
     }
-
-    bool matchCore(const char* str, const char* pattern)
-{
-    //cout<<"bbb"<<endl;
-    if(*str == '\0' && *pattern == '\0')
-        return true;
-
-    if(*str != '\0' && *pattern == '\0')
-    {
-        cout<<"a"<<endl;
-            return false;
-    }
-
-    if(*(pattern + 1) == '*')
-    {
-        if(*pattern == *str || (*pattern == '.' && *str != '\0'))
-            // 进入有限状态机的下一个状态
-            return matchCore(str + 1, pattern + 2)
-            // 继续留在有限状态机的当前状态 
-            || matchCore(str + 1, pattern)
-            // 略过一个'*' 
-            || matchCore(str, pattern + 2);
-        else
-            // 略过一个'*'
-            return matchCore(str, pattern + 2);
-    }
-
-    if(*str == *pattern || (*pattern == '.' && *str != '\0'))
-        return matchCore(str + 1, pattern + 1);
-
-    return false;
-}
-bool isMatch(char* str, char* pattern){
-if(str == NULL || pattern == NULL)
-        return false;
-
-    return matchCore(str, pattern);
-}
 };
 
 int main()
@@ -774,7 +786,7 @@ int main()
     string s1,p1;
     char s[24],p[24];
     cin>>s1>>p1;
-    cout<<solution.isMatch(s1,p1);
+    cout<<solution.isMatch(s1,p1)<<endl;;
 
     return 0;
 }
