@@ -555,13 +555,6 @@ public:
         return res;*/
     }
 
-    void swap(int& a, int& b)
-    {
-        int te = a;
-        a = b;
-        b = te;
-    }
-
     void  printNumbersCore(vector<int>& vec,int a,int t, int n)
     {
         if (t == n)
@@ -779,15 +772,116 @@ public:
 
         return re;
     }
+
+    bool scan_unsigned(string str,int& x)
+    {
+        int te=x;
+        while(x<str.length() && str[x]>='0' && str[x]<='9')
+            x++;
+        return x>te;
+    }
+
+    bool scan_int(string str,int& x)
+    {
+        if(str[x]=='+' || str[x]=='-')
+            x++;
+        return scan_unsigned(str,x);
+    }
+
+    bool isNumber(string s) 
+    {
+        if(s.empty())
+            return false;
+        
+        int x=0;
+        bool flag=scan_int(s,x);
+       // cout<<flag<<" "<<x<<endl;
+
+        if(s[x]=='.')
+        {
+            x++;
+            flag=scan_unsigned(s,x) || flag;
+           // cout<<flag<<" "<<x<<endl;
+        }
+
+        if(s[x]=='e' || s[x]=='E')
+        {
+            x++;
+            flag=flag && scan_int(s,x);
+            cout<<flag<<" "<<x<<endl;
+        }
+       // cout<<flag<<" "<<x<<endl;
+
+        return flag && x==s.length();
+    }
+
+    void swap(int& a,int& b)
+    {
+        a=a^b;
+        b=a^b;
+        a=a^b;
+    }
+
+    void reOrderArray(vector<int> &array) 
+    {
+        if(array.empty())
+            return;
+        auto be=array.begin(),en=array.end()-1;
+
+        while (be<en)
+        {
+            while (be<en && (*be)%2)
+                be++;
+            while (be<en && !((*en)%2))
+                en--;
+            if(be<en)
+                swap(*be,*en);
+        }
+                
+    }
+
+    ListNode* getKthFromEnd(ListNode* head, int k) 
+    {
+        if(!head || k==0)
+            return nullptr;
+
+        ListNode* p1=head,*p2=head;
+        for(int i=0;i<k-1;i++)
+        {
+            if(p1->next)
+                p1=p1->next;
+            else
+                return nullptr;
+        }
+
+        while (p1->next)
+        {
+            p1=p1->next;
+            p2=p2->next;
+        }
+
+        return p2;
+    }
 };
 
 int main()
 {
     Solution solution;
-    string s1,p1;
-    char s[24],p[24];
-    cin>>s1>>p1;
-    cout<<solution.isMatch(s1,p1)<<endl;;
+    vector<int> vec;
+    int n;
+
+    cin>>n;
+    for(int i=0;i<n;i++)
+    {
+        int te;
+        cin>>te;
+        vec.push_back(te);
+    }
+    solution.reOrderArray(vec);
+    for(int a : vec)
+        cout<<a<<" ";
+    cout<<endl;
+    //cout<<solution.isNumber(s1)<<endl;;
 
     return 0;
 }
