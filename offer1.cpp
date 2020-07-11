@@ -11,6 +11,14 @@ struct ListNode
     }
 };
 
+struct TreeNode 
+{
+	int val;
+	struct TreeNode *left;
+	struct TreeNode *right;
+	TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+};
+
 class Solution
 {
 public:
@@ -154,6 +162,63 @@ public:
         }
            
         return head;*/
+    }
+
+    bool HasSubtree_core(TreeNode* pRoot1, TreeNode* pRoot2)
+    {
+        if(!pRoot2)
+            return true;
+        if(!pRoot1)
+            return false;
+        
+        if(pRoot1->val==pRoot2->val)
+        {
+            bool flag=HasSubtree_core(pRoot1->left,pRoot2->left) && HasSubtree_core(pRoot1->right,pRoot2->right);
+            if(flag)
+                return true;
+        }
+        return HasSubtree_core(pRoot1->left,pRoot2) || HasSubtree_core(pRoot1->right,pRoot2);
+    }
+
+    bool HasSubtree(TreeNode* pRoot1, TreeNode* pRoot2)
+    {
+        if(!pRoot1 || !pRoot2)
+            return false;
+        return HasSubtree_core(pRoot1,pRoot2);
+    }
+
+    void Mirror(TreeNode *pRoot) 
+    {
+        if(!pRoot)
+            return;
+        
+        Mirror(pRoot->left);
+        Mirror(pRoot->right);
+        TreeNode* te=pRoot->left;
+        pRoot->left=pRoot->right;
+        pRoot->right=te;
+    }
+
+    bool isSymmetrical_core(TreeNode* pRoot1,TreeNode* pRoot2)
+    {
+        if(!pRoot1 && !pRoot2)
+            return true;
+        if(!pRoot1 || !pRoot2)
+            return false;
+        
+        if(pRoot1->val!=pRoot2->val)
+            return false;
+        /*TreeNode* te=pRoot2->left;
+        pRoot2->left=pRoot2->right;
+        pRoot2->right=te;*/
+        return isSymmetrical_core(pRoot1->left,pRoot2->right) && isSymmetrical_core(pRoot1->right,pRoot2->left);
+    }
+
+    bool isSymmetrical(TreeNode* pRoot)
+    {
+        if(!pRoot)
+            return true;
+        return isSymmetrical_core(pRoot->left,pRoot->right);
     }
 };
 
