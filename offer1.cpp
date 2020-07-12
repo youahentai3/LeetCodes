@@ -1,4 +1,7 @@
 #include <iostream>
+#include <vector>
+#include <queue>
+#include <stack>
 
 using namespace std;
 
@@ -220,6 +223,122 @@ public:
             return true;
         return isSymmetrical_core(pRoot->left,pRoot->right);
     }
+    
+    vector<int> printMatrix(vector<vector<int> > matrix) 
+    {
+        vector<int> vec;
+        return vec;
+    }
+    
+    vector<int> PrintFromTopToBottom(TreeNode* root) 
+    {
+        vector<int> vec;
+        if(!root)
+            return vec;
+        queue<TreeNode*> que;
+        que.push(root);
+
+        while(!que.empty())
+        {
+            TreeNode* p=que.front();
+            vec.push_back(p->val);
+            que.pop();
+            if(p->left)
+                que.push(p->left);
+            if(p->right)
+                que.push(p->right);
+        }
+
+        return vec;
+    }
+
+    vector<vector<int> > Print2(TreeNode* pRoot) 
+    {    
+        vector<vector<int> > vec;
+        vector<int> vecc;
+        if(!pRoot)
+            return vec;
+        int pren=1,nren=0;
+        queue<TreeNode*> que;
+        que.push(pRoot);
+
+        while(!que.empty())
+        {
+            TreeNode* p=que.front();
+            vecc.push_back(p->val);
+            que.pop();
+            if(p->left)
+            {
+                que.push(p->left);
+                nren++;
+            }
+            if(p->right)
+            {
+                que.push(p->right);
+                nren++;
+            }
+            if(!(--pren))
+            {
+                pren=nren;
+                nren=0;
+                vec.push_back(vecc);
+                vecc.clear();
+            }
+        }
+
+        return vec;
+    }
+
+    vector<vector<int> > Print(TreeNode* pRoot) 
+    {
+        vector<vector<int> > vec;
+        vector<int> vecc;
+        if(!pRoot)
+            return vec;
+        int pren=1,nren=0,cur=0;
+        stack<TreeNode*> sta[2];
+        sta[0].push(pRoot);
+
+        while(!sta[0].empty() || !sta[1].empty())
+        {
+            TreeNode* p=sta[cur].top();
+            vecc.push_back(p->val);
+            sta[cur].pop();
+
+            TreeNode* first;
+            TreeNode* second;
+            if(cur)
+            {
+                first=p->right;
+                second=p->left;
+            }
+            else
+            {
+                first=p->left;
+                second=p->right;
+            }
+            if(first)
+            {
+                sta[!cur].push(first);
+                nren++;
+            }
+            if(second)
+            {
+                sta[!cur].push(second);
+                nren++;
+            }
+            if(!(--pren))
+            {
+                cur=!cur;
+                pren=nren;
+                nren=0;
+                vec.push_back(vecc);
+                vecc.clear();
+            }
+        }
+
+        return vec;
+    }
 };
 
 ListNode* add_node(ListNode* head,int val)
@@ -264,16 +383,7 @@ void print_list(ListNode* head)
 
 int main()
 {
-    int n;
-    cin>>n;
-    ListNode* head1=nullptr;
-    ListNode* head2=nullptr;
-    head1=create_list(head1,n);
-    print_list(head1);
-    head2=create_list(head2,n);
-    print_list(head2);
-    head1=(new Solution())->Merge(head1,head2);
-    print_list(head1);
+    
 
     return 0; 
 }
