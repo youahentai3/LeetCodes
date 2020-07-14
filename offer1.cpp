@@ -227,6 +227,37 @@ public:
     vector<int> printMatrix(vector<vector<int> > matrix) 
     {
         vector<int> vec;
+        if(matrix.empty())
+            return vec;
+        int x=0,y=0;
+        int n=matrix.size(),m=matrix[0].size();
+
+        while(n>x*2 && m>y*2)
+        {
+            for(int i=y;i<m-y-1;i++)
+                vec.push_back(matrix[x][i]);
+            for(int i=x;i<n-x-1;i++)
+                vec.push_back(matrix[i][m-1-x]);
+            if(x<n-x-1 && y<m-y-1)
+            {
+                for(int i=m-1-y;i>y;i--)
+                    vec.push_back(matrix[n-1-x][i]);
+                for(int i=n-1-x;i>x;i--)
+                    vec.push_back(matrix[i][y]);
+            }
+            if(y==m-y-1)
+            {
+                vec.push_back(matrix[n-1-x][y]);
+            }
+            else if(x==n-1-x)
+            {
+                vec.push_back(matrix[x][m-1-y]);
+            }
+            
+            x++;
+            y++;
+        }
+
         return vec;
     }
     
