@@ -1,6 +1,10 @@
 #include <iostream>
 #include <vector>
 #include <stack>
+#include <string>
+#include <cstring>
+#include <sstream>
+#include <unordered_set>
 
 using namespace std;
 
@@ -162,12 +166,114 @@ public:
 
         return nHead;
     }
+
+    void convert_core(TreeNode* root,TreeNode*& pre,TreeNode*& head)
+    {
+        if(root->left)
+            convert_core(root->left,pre,head);
+        if(pre)
+        {
+            pre->right=root;
+            root->left=pre;
+        }
+        else 
+        {
+            head=root;
+            //root->left=root;
+        }
+        pre=root;
+        if(root->right)
+            convert_core(root->right,pre,head);
+    }
+
+    TreeNode* Convert(TreeNode* pRootOfTree)
+    {   
+        if(!pRootOfTree)
+            return nullptr;
+        
+        TreeNode* head=nullptr;
+        TreeNode* pre=nullptr;
+        convert_core(pRootOfTree,pre,head);
+        pre->right=head;
+        head->left=pre;
+
+        return head;
+    }
+
+    // Encodes a tree to a single string.
+    string serialize(TreeNode* root) 
+    {
+        if(!root)
+            return "$";
+        return to_string(root->val)+" "+serialize(root->left)+" "+serialize(root->right);   
+    }
+
+    TreeNode* deserialize_core(stringstream& data)
+    {
+        string str;
+        if(!(data>>str))
+            return nullptr;
+        if(str=="$")
+            return nullptr;
+
+        TreeNode* root=new TreeNode(stoi(str));
+        root->left=deserialize_core(data);
+        root->right=deserialize_core(data);
+        return root;
+    }
+
+    // Decodes your encoded data to tree.
+    TreeNode* deserialize(string data) 
+    {    
+        stringstream dat(data);
+        return deserialize_core(dat);
+    }
+
+    void swap(int& a,int& b)
+    {
+        a=a^b;
+        b=a^b;
+        a=a^b;
+    }
+
+    void swap(char& a,char& b)
+    {
+        auto te=a;
+        a=b;
+        b=te;
+    }
+
+    unordered_set<char> set;
+    void permutation_core(vector<string>& vec, string& s,int k)
+    {
+        if(k==s.size())
+        {
+            vec.push_back(s);
+            return;
+        }
+        unordered_set<char> set;
+        for(int i=k;i<s.size();i++)
+        {
+            if(set.insert(s[i]).second)
+            {
+//                set.insert(s[i]);
+                swap(s[k],s[i]);
+                permutation_core(vec,s,k+1);
+                swap(s[k],s[i]);
+                //set.erase(s[i]);
+            }
+        }
+    }
+
+    vector<string> permutation(string s) 
+    {
+        vector<string> vec;
+        if(s.empty())
+            return vec;
+        permutation_core(vec,s,0);
+        return vec;
+    }
 };
-
-void add_ran_list(RandomListNode* root,int val,int a)
-{
-
-}
 
 int main()
 {
