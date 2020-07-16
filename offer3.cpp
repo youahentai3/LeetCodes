@@ -5,6 +5,7 @@
 #include <cstring>
 #include <sstream>
 #include <unordered_set>
+#include <algorithm>
 
 using namespace std;
 
@@ -272,6 +273,139 @@ public:
             return vec;
         permutation_core(vec,s,0);
         return vec;
+    }
+
+    int partition(vector<int>& nums,int p,int r)
+    {
+        int ind=rand()%(r-p+1)+p;
+        std::swap(nums[ind],nums[r]);
+
+        int k=p;
+        for(int i=p;i<r;i++)
+        {
+            if(nums[i]<nums[r])
+                std::swap(nums[k++],nums[i]);
+        }
+        std::swap(nums[k],nums[r]);
+
+        return k;
+    }
+
+    int size1;
+    int majot_core(vector<int>& nums,int p,int r)
+    {
+        int q=partition(nums,p,r);
+        if(q==size1)
+            return nums[q];
+        else if(q<size1)
+            return majot_core(nums,q+1,r);
+        else 
+            return majot_core(nums,p,q-1);
+    }
+
+    int majorityElement(vector<int>& nums) 
+    {
+        int cou=1,a=nums[0];
+        for(auto ite=nums.begin()+1;ite!=nums.end();ite++)
+        {
+            if(*ite==a)
+                cou++;
+            else 
+            {
+                cou--;
+                if(!cou)
+                {
+                    a=*ite;
+                    cou++;
+                }
+            }
+        }
+        return a;
+        /*size1=nums.size()/2;
+        int p=0,r=nums.size()-1;
+        int q=partition(nums,p,r);
+        while(q!=size1)
+        {
+            if(q<size1)
+            {
+                p=q+1;
+            }
+            else 
+                r=q-1;
+            q=partition(nums,p,r);
+        }
+        return nums[q];*/
+        //return majot_core(nums,0,nums.size()-1);
+    }
+
+    vector<int> getLeastNumbers(vector<int>& arr, int k) 
+    {
+        vector<int> re;
+        if(!k)
+            return re;
+        if(k>arr.size())
+            return arr;
+        int p=0,r=arr.size()-1;
+        int q=partition(arr,p,r);
+        while(q!=k-1)
+        {
+            if(q<k)
+            {
+                p=q+1;
+            }
+            else 
+                r=q-1;
+            q=partition(arr,p,r);
+        }
+        vector<int> re(arr.begin(),arr.begin()+q+1);
+        return re;
+    }
+
+    vector<int> min_heap,max_heap;
+    bool fflag=true;
+    void addNum(int num) 
+    {
+        if(!fflag)
+        {
+            if(!max_heap.empty() && max_heap[0]>num)
+            {
+                max_heap.push_back(num);
+                push_heap(max_heap.begin(),max_heap.end(),[](const int& a,const int& b){return a<b;});
+                num=max_heap[0];
+                pop_heap(max_heap.begin(),max_heap.end(),[](const int& a,const int& b){return a<b;});
+                max_heap.pop_back();
+            }
+            min_heap.push_back(num);
+            push_heap(min_heap.begin(),min_heap.end(),[](const int& a,const int& b){return a>b;});
+        }
+        else 
+        {
+            if(!min_heap.empty() && min_heap[0]<num)
+            {
+                min_heap.push_back(num);
+                push_heap(min_heap.begin(),min_heap.end(),[](const int& a,const int& b){return a>b;});
+                num=min_heap[0];
+                pop_heap(min_heap.begin(),min_heap.end(),[](const int& a,const int& b){return a>b;});
+                min_heap.pop_back();
+            }
+            max_heap.push_back(num);
+            push_heap(max_heap.begin(),max_heap.end(),[](const int& a,const int& b){return a<b;});
+        }
+        fflag=!fflag;
+    }
+    
+    double findMedian() 
+    {
+        if(!fflag)
+        {
+            return (max_heap.size()>min_heap.size() ? max_heap[0] : min_heap[0]);
+        }
+        else 
+        {
+            if(!min_heap.empty() && !max_heap.empty())
+                return (min_heap[0]+max_heap[0])/2.0;
+            return -1;
+        }
     }
 };
 
