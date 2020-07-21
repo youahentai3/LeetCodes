@@ -6,6 +6,8 @@
 #include <iostream>
 #include <vector>
 #include <cmath>
+#include <unordered_map>
+#include <memory>
 
 using namespace std;
 
@@ -124,13 +126,100 @@ public:
 
         return ptr[str.size()];
     }
+
+    int maxValue(vector<vector<int>>& grid) 
+    {
+        if(grid.empty())
+            return 0;
+
+        //unique_ptr<unique_ptr<int[]>[]> ptrs(new unique_ptr<int[]>[grid.size()+1]);
+        int n=grid.size()+1,m=grid[0].size()+1;
+        int** ptrs=new int*[n];
+        for(int i=0;i<n;i++)
+            ptrs[i]=new int[m];
+            //ptrs[i].reset(new int[grid[0].size()+1]);
+        for(int i=0;i<=grid.size();i++)
+        {
+            for(int j=0;j<=grid[i].size();j++)
+            {
+                if(i==0 || j==0)
+                    ptrs[i][j]=0;
+                else 
+                {
+                    ptrs[i][j]=(ptrs[i-1][j] > ptrs[i][j-1] ? ptrs[i-1][j] : ptrs[i][j-1]);
+                    ptrs[i][j]+=grid[i-1][j-1];
+                }
+            }
+        }
+
+        return ptrs[grid.size()][grid[0].size()];
+    }
+    
+    int lengthOfLongestSubstring(string s) 
+    {
+        if(s.empty())
+            return 0;
+
+        unordered_map<char,string::iterator> ma;
+        int dmp=0,max1=0;
+
+        for(auto ite=s.begin();ite!=s.end();ite++)
+        {
+            auto a=ma.insert(make_pair(*ite,ite));
+            if(a.second)
+                dmp++;
+            else 
+            {
+                int te=ite-a.first->second;
+                if(te<=dmp)
+                    dmp=te;
+                else 
+                    dmp++;
+                ma[*ite]=ite;
+            }
+           // cout<<dmp<<endl;
+            if(dmp>max1)
+                max1=dmp;
+        }
+
+        return max1;
+    }
+
+    int nthUglyNumber(int n) 
+    {
+        if(n<=0)
+            return 0;
+
+        unique_ptr<int[]> ptr(new int[n]);
+        int a=0,b=0,c=0;
+        ptr[0]=1;
+
+        for(int i=1;i<n;i++)
+        {
+            int ate=ptr[a]*2,bte=ptr[b]*3,cte=ptr[c]*5;
+            int te=ate;
+            if(te>bte)
+                te=bte;
+            if(te>cte)
+                te=cte;
+            if(te==ate)
+                a++;
+            if(te==bte)
+                b++;
+            if(te==cte)
+                c++;
+            ptr[i]=te;
+        }
+
+        return ptr[n-1];
+    }
 };
 int main()
 {
     Solution solution;
-    int n;
+    string n;
     cin>>n;
-    cout<<solution.findNthDigit(n)<<endl;
+    cout<<solution.lengthOfLongestSubstring(n)<<endl;
 
     return 0;
 }
