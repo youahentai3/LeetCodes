@@ -11,6 +11,13 @@
 
 using namespace std;
 
+struct ListNode 
+{
+    int val;
+    ListNode *next;
+    ListNode(int x) : val(x), next(NULL) {}
+ };
+
 class Solution
 {
 public:
@@ -213,13 +220,127 @@ public:
 
         return ptr[n-1];
     }
+
+    char firstUniqChar(string s) 
+    {
+        unordered_map<char,int> ma;
+
+        for(auto a : s)
+        {
+            ma[a]++;
+        }
+        for(auto a : s)
+        {
+            if(ma[a]==1)
+                return a;
+        }
+        return 0;
+    }
+
+    ListNode *getIntersectionNode(ListNode *headA, ListNode *headB) 
+    {   
+        if(!headA || !headB)
+            return nullptr;
+        
+        int al=0,bl=0;
+        ListNode* p1=headA;
+        ListNode* p2=headB;
+        while(p1)
+        {
+            al++;
+            p1=p1->next;
+        }
+        while(p2)
+        {
+            bl++;
+            p2=p2->next;
+        }
+
+        int gap=0;
+        if(bl>al)
+        {
+            gap=bl-al;
+            p1=headB;
+            p2=headA;
+        }
+        else 
+        {
+            gap=al-bl;
+            p1=headA;
+            p2=headB;
+        }
+
+        while(gap--)
+        {
+            p1=p1->next;
+        }
+        while(p1!=p2 && p1 && p2)
+        {
+            p1=p1->next;
+            p2=p2->next;
+        }
+
+        return p1;
+    }
+
+    int cou=0;
+    void rmerge(vector<int>& nums,int p,int q,int r)
+    {
+        vector<int> left(nums.begin()+p,nums.begin()+q+1);
+        vector<int> right(nums.begin()+q+1,nums.begin()+r+1);
+        left.push_back(INT_MAX);
+        right.push_back(INT_MAX);
+
+        int i=0,j=0;
+        for(int k=p;k<=r;k++)
+        {
+            //cout<<left[i]<<"ggg "<<right[j]<<endl;
+            if(left[i]>right[j])
+            {
+                cout<<left[i]<<" "<<right[j]<<endl;
+                cout<<left.size()<<" "<<i<<" "<<j<<endl;
+                cou+=left.size()-i-1;
+                nums[k]=right[j++];
+            }
+            else
+                nums[k]=left[i++];
+        }
+    }
+
+    void reverse_core(vector<int>& nums,int p,int r)
+    {
+        if(p>=r)
+            return;
+
+        int q=p+(r-p)/2;
+        reverse_core(nums,p,q);
+        reverse_core(nums,q+1,r);
+        rmerge(nums,p,q,r);
+    }
+
+    int reversePairs(vector<int>& nums) 
+    {
+        if(nums.empty())
+            return cou;
+        
+        reverse_core(nums,0,nums.size()-1);
+
+        return cou;
+    }
 };
 int main()
 {
     Solution solution;
-    string n;
+    int n;
+    vector<int> nums;
     cin>>n;
-    cout<<solution.lengthOfLongestSubstring(n)<<endl;
+    while(n--)
+    {
+        int te;
+        cin>>te;
+        nums.push_back(te);
+    }
+    cout<<solution.reversePairs(nums)<<endl;
 
     return 0;
 }
