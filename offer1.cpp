@@ -2,6 +2,7 @@
 #include <vector>
 #include <queue>
 #include <stack>
+#include <functional>
 
 using namespace std;
 
@@ -369,6 +370,93 @@ public:
         }
 
         return vec;
+    }
+
+    int search_core(vector<int>& nums,int target,bool flag)
+    {
+        int x=0,y=nums.size()-1;
+
+        while(x<=y)
+        {
+            int mid=x+(y-x)/2;
+            if(target>nums[mid])
+                x=mid+1;
+            else if(target<nums[mid])
+                y=mid-1;
+            else 
+            {
+                if(flag)
+                {
+                    if(!mid || nums[mid-1]!=nums[mid])
+                        return mid;
+                    else 
+                        y=mid-1;
+                }
+                else 
+                {
+                    if(mid==nums.size()-1 || nums[mid+1]!=nums[mid])
+                        return mid;
+                    else 
+                        x=mid+1;
+                }
+            }
+        }
+
+        return -1;
+    }
+
+    int search(vector<int>& nums, int target) 
+    {
+        int fir=search_core(nums,target,1);
+        int sec=search_core(nums,target,0);
+
+        if(fir!=-1 && sec!=-1)
+            return sec-fir+1;
+        return -1;
+    }
+
+    int missingNumber(vector<int>& nums) 
+    {
+        int x=0,y=nums.size()-1;
+
+        while(x<=y)
+        {
+            int mid=x+(y-x)/2;
+            if(nums[mid]==mid)
+                x=mid+1;
+            else if(mid==0 || nums[mid-1]==mid-1)
+                return mid;
+            else 
+                y=mid-1;
+        }
+
+        return -1;
+    }
+
+    int kthLargest(TreeNode* root, int k) 
+    {
+        TreeNode* p=root;
+        int cou=1;
+        stack<TreeNode*> sta;
+
+        while(p || !sta.empty())
+        {
+            if(p)
+            {
+                sta.push(p);
+                p=p->right;
+            }
+            else 
+            {
+                p=sta.top();
+                if(!(--k))
+                    return p->val;
+                sta.pop();
+                p=p->left;
+            }
+        }
+
+        return 0;
     }
 };
 
