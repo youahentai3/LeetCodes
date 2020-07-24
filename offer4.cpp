@@ -18,6 +18,14 @@ struct ListNode
     ListNode(int x) : val(x), next(NULL) {}
  };
 
+ struct TreeNode 
+ {
+    int val;
+    TreeNode *left;
+    TreeNode *right;
+    TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ };
+
 class Solution
 {
 public:
@@ -297,8 +305,8 @@ public:
             //cout<<left[i]<<"ggg "<<right[j]<<endl;
             if(left[i]>right[j])
             {
-                cout<<left[i]<<" "<<right[j]<<endl;
-                cout<<left.size()<<" "<<i<<" "<<j<<endl;
+                //cout<<left[i]<<" "<<right[j]<<endl;
+                //cout<<left.size()<<" "<<i<<" "<<j<<endl;
                 cou+=left.size()-i-1;
                 nums[k]=right[j++];
             }
@@ -326,6 +334,66 @@ public:
         reverse_core(nums,0,nums.size()-1);
 
         return cou;
+    }
+
+    int maxDepth(TreeNode* root) 
+    {
+        if(!root)
+            return 0;
+
+        int a=maxDepth(root->left);
+        int b=maxDepth(root->right);
+
+        return (a>b ? a : b)+1;
+    }
+
+    bool isBalanced_core(TreeNode* root,int& depth)
+    {
+        if(!root)
+            return true;
+
+        int left=0,right=0;
+        if(!isBalanced_core(root->left,left) || !isBalanced_core(root->right,right))
+            return false;
+
+        if(abs(left-right)>1)
+            return false;
+        depth+=(left>right ? left : right)+1;
+        return true;
+    }
+
+    bool isBalanced(TreeNode* root) 
+    {
+        int depth=0;
+        return isBalanced_core(root,depth);
+    }
+
+    vector<int> singleNumbers(vector<int>& nums) 
+    {
+        int a=0;
+        for(auto b : nums)
+            a^=b;
+        
+        int ind=0,x=0x1;
+        while(x)
+        {
+            if(a&x)
+                break;
+            x<<=1;
+        }
+
+        int c=0;
+        a=0;
+        for(auto b : nums)
+        {
+            if(b&x)
+                a^=b;
+            else 
+                c^=b;
+        }
+
+        vector<int> vec({a,c});
+        return vec;
     }
 };
 int main()
