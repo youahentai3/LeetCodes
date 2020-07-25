@@ -395,6 +395,33 @@ public:
         vector<int> vec({a,c});
         return vec;
     }
+
+    int singleNumber(vector<int>& nums) 
+    {
+        int re[32]={0};
+        for(auto a : nums)
+        {
+            unsigned int x=0x1;
+            for(int i=0;i<32;i++)
+            {
+                re[i]+=!!(x&a);
+                x<<=1;
+            }
+        }
+
+        unsigned int b=0;
+        for(int i=31;i>=0;i--)
+        {
+            b<<=1;
+            if(re[i]%3)
+            {
+                b++;
+            }
+        }
+        //cout<<endl;
+
+        return b;
+    }
 };
 int main()
 {
@@ -408,7 +435,7 @@ int main()
         cin>>te;
         nums.push_back(te);
     }
-    cout<<solution.reversePairs(nums)<<endl;
+    cout<<solution.singleNumber(nums)<<endl;
 
     return 0;
 }
