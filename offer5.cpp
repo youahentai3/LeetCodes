@@ -4,8 +4,17 @@
 #include <deque>
 #include <string>
 #include <queue>
+#include <algorithm>
+#include <cmath>
 
 using namespace std;
+
+struct c_list
+{
+    int val;
+    c_list* next;
+    c_list(int _val,c_list* n):val(_val),next(n){}
+};
 
 class MaxQueue 
 {
@@ -262,14 +271,93 @@ public:
 
         return true;
     }
+
+    int lastRemaining(int n, int m) 
+    {
+        //数学公式实现
+        if(n<1 || m<1)
+            return -1;
+        int re=0;
+        for(int i=2;i<=m;i++)
+        {
+            re=(re+m)%i;
+        }
+        return re;
+        //循环链表实现
+        if(n<1)
+            return -1;
+        c_list* head=nullptr,*p;
+        for(int i=0;i<n;i++)
+        {
+            if(!head)
+            {
+                head=new c_list(0,nullptr);
+                p=head;
+            }
+            else 
+            {
+                p->next=new c_list(i,nullptr);
+                p=p->next;
+            }
+        }
+        p->next=head;
+
+        c_list* pre_p=p;
+        p=head;
+        while(p->next!=p)
+        {
+            for(int i=1;i<m;i++)
+            {
+                pre_p=p;
+                p=p->next;
+            }
+           // cout<<p->val<<endl;
+            pre_p->next=pre_p->next->next;
+            p=pre_p->next;
+        }
+
+        return p->val;
+    }
+
+    int maxProfit(vector<int>& prices) 
+    {
+        int min_cost=INT_MAX,profit=0;
+        for(auto a : prices)
+        {
+            profit=(profit>(a-min_cost) ? profit : (a-min_cost));
+            min_cost=(min_cost<a ? min_cost : a);
+        }
+
+        return profit;
+    }
+
+    typedef int (*fun)(int);
+
+    static fun f[2];
+
+    static int add1(int a)
+    {
+        return 0;
+    }
+    static int add2(int a)
+    {
+        //static fun f[2]={add1,add2};
+        return a+f[!!a](a-1);
+    }
+
+    int sumNums(int n) 
+    {
+        return f[!!n](n);
+    }
 };
+Solution::fun Solution::f[2]={add1,add2};
 
 int main()
 {
-    string s;
-    getline(cin,s);
+    int n,m;
+    cin>>n>>m;
     Solution solution;
-    cout<<solution.reverseWords(s)<<endl;
+    cout<<solution.lastRemaining(n,m)<<endl;
 
     return 0;
 }
