@@ -349,6 +349,88 @@ public:
     {
         return f[!!n](n);
     }
+
+    int add(int a, int b) 
+    {
+        unsigned int c,d;
+
+        do
+        {
+            c=a^b;
+            d=(unsigned)(a&b)<<1;
+            a=c;
+            b=d;
+        } while (d);
+        
+        return c;
+    }
+
+    vector<int> constructArr(vector<int>& a) 
+    {
+        vector<int> b(a.size(),1);
+        for(int i=1;i<b.size();i++)
+        {
+            b[i]=b[i-1]*a[i-1];
+        }
+        int te=1;
+        for(int i=b.size()-2;i>=0;i--)
+        {
+            te*=a[i+1];
+            b[i]*=te;
+        }
+
+        return b;
+    }
+
+    int strToInt(string str) 
+    {
+        bool flag=true;
+        int sign=1;
+        int num=0;
+
+        for(auto ch : str)
+        {
+            if(flag)
+            {
+                if(ch==' ')
+                    continue;
+                else if(ch=='-')
+                {
+                    flag=false;
+                    sign=-1;
+                }
+                else if(ch=='+')
+                {
+                    flag=false;
+                }
+                else if(ch>='0' && ch<='9')
+                {
+                    flag=false;
+                    num=num*10+ch-'0';
+                }
+                else 
+                {
+                    break;
+                }
+            }  
+            else 
+            {
+                if(ch>='0' && ch<='9')
+                {
+                    int x=ch-'0';
+                    if(num>INT_MAX/10 || (num==INT_MAX/10 && x>7))
+                    {
+                        return sign==1 ? INT_MAX : INT_MIN;
+                    }
+                    num=num*10+x;
+                }
+                else 
+                    break;
+            } 
+        }
+
+        return num;
+    }
 };
 Solution::fun Solution::f[2]={add1,add2};
 
