@@ -16,6 +16,14 @@ struct c_list
     c_list(int _val,c_list* n):val(_val),next(n){}
 };
 
+struct TreeNode 
+{
+    int val;
+    TreeNode *left;
+   TreeNode *right;
+    TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ };
+
 class MaxQueue 
 {
 private:
@@ -430,6 +438,41 @@ public:
         }
 
         return num;
+    }
+
+    TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) 
+    {   
+        while(root)
+        {
+            if(root->val>p->val && root->val>q->val)
+            {
+                root=root->left;
+            }
+            else if(root->val<p->val && root->val<q->val)
+                root=root->right;
+            else 
+                break;
+        }
+
+        return root;
+    }
+
+    TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) 
+    {   
+        if(!root || root->val==p->val || root->val==q->val)
+            return root;
+            
+        TreeNode* left=lowestCommonAncestor(root->left,p,q);
+        TreeNode* right=lowestCommonAncestor(root->right,p,q);
+
+        if(left && right)
+        {
+            return root;
+        }
+        else if(left)
+            return left;
+        else
+            return right;
     }
 };
 Solution::fun Solution::f[2]={add1,add2};
